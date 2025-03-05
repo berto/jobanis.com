@@ -470,7 +470,7 @@ function formatTime(seconds, showSeconds = false) {
  * Create decorative background circles
  */
 function createBackgroundCircles() {
-  const numCircles = 5;
+  const numCircles = 15; // Increased from 5 to 15 for more vibrant look
   
   for (let i = 0; i < numCircles; i++) {
     const circle = {
