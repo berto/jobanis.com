@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maze Runner</title>
+  <style>
+    /* Base Styles */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      min-height: 100vh;
+      padding: 16px;
+      overscroll-behavior: none; /* Prevent pull-to-refresh on mobile */
+    }
+    
+    /* Layout */
+    .flex {
+      display: flex;
+    }
+    
+    .flex-col {
+      flex-direction: column;
+    }
+    
+    .items-center {
+      align-items: center;
+    }
+    
+    .justify-center {
+      justify-content: center;
+    }
+    
+    .justify-between {
+      justify-content: space-between;
+    }
+    
+    .p-4 {
+      padding: 16px;
+    }
+    
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+    
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .space-x-2 > * + * {
+      margin-left: 8px;
+    }
+    
+    .gap-4 {
+      gap: 16px;
+    }
+    
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+    
+    .w-full {
+      width: 100%;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    .max-w-4xl {
+      max-width: 896px;
+    }
+    
+    .min-h-screen {
+      min-height: 100vh;
+    }
+    
+    .relative {
+      position: relative;
+    }
+    
+    /* Typography */
+    .text-3xl {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
+    
+    .font-bold {
+      font-weight: 700;
+    }
+    
+    .text-gray-800 {
+      color: #1f2937;
+    }
+    
+    .text-sm {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+    
+    .text-gray-700 {
+      color: #374151;
+    }
+    
+    /* Components */
+    .bg-white {
+      background-color: white;
+    }
+    
+    .rounded-lg {
+      border-radius: 0.5rem;
+    }
+    
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .overflow-hidden {
+      overflow: hidden;
+    }
+    
+    .border-b {
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: #e5e7eb;
+    }
+    
+    /* Game Controls */
+    .bg-gray-50 {
+      background-color: #f9fafb;
+    }
+    
+    .bg-green-600 {
+      background-color: #059669;
+    }
+    
+    .hover-bg-green-700:hover {
+      background-color: #047857;
+    }
+    
+    .text-white {
+      color: white;
+    }
+    
+    .px-4 {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    
+    .py-2 {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .rounded-md {
+      border-radius: 0.375rem;
+    }
+    
+    .shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+    
+    .transition-colors {
+      transition-property: background-color, border-color, color, fill, stroke;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+    
+    .border {
+      border-width: 1px;
+      border-style: solid;
+      border-color: #e5e7eb;
+    }
+    
+    /* Canvas and Game Elements */
+    canvas {
+      touch-action: none;
+      display: block;
+    }
+    
+    .custom-cursor {
+      cursor: none !important;
+    }
+    
+    .p-3 {
+      padding: 12px;
+    }
+    
+    /* Game Status Colors */
+    .bg-success {
+      background-color: rgba(16, 185, 129, 0.75);
+    }
+    
+    .bg-error {
+      background-color: rgba(239, 68, 68, 0.75);
+    }
+    
+    .text-success {
+      color: rgb(16, 185, 129);
+    }
+    
+    .text-error {
+      color: rgb(239, 68, 68);
+    }
+    
+    /* Overlay */
+    .absolute {
+      position: absolute;
+    }
+    
+    .inset-0 {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    
+    .z-10 {
+      z-index: 10;
+    }
+    
+    .bg-opacity-75 {
+      --bg-opacity: 0.75;
+    }
+    
+    .h-12 {
+      height: 3rem;
+    }
+    
+    .w-12 {
+      width: 3rem;
+    }
+    
+    .mx-auto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+    
+    .text-xl {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+    }
+    
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+    
+    /* Custom triangle clip path */
+    .clip-triangle {
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+    
+    .max-w-sm {
+      max-width: 24rem;
+    }
+    
+    .p-6 {
+      padding: 1.5rem;
+    }
+    
+    /* Instructions styles */
+    .list-disc {
+      list-style-type: disc;
+    }
+    
+    .pl-5 {
+      padding-left: 1.25rem;
+    }
+    
+    .space-y-1 > * + * {
+      margin-top: 0.25rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .p-4 {
+        padding: 12px;
+      }
+      
+      .text-3xl {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center justify-center p-4 max-w-4xl mx-auto min-h-screen">
+    <div class="w-full text-center mb-4 relative">
+      <h1 class="text-3xl font-bold text-gray-800">Maze Runner</h1>
+    </div>
+
+    <div class="w-full bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="p-4 bg-gray-50 border-b">
+        <div class="flex flex-wrap gap-4 justify-between items-center">
+          <!-- Left Side Controls -->
+          <div class="flex items-center space-x-2">
+            <!-- New Game button -->
+            <button 
+              id="new-game-btn"
+              class="px-4 py-2 bg-green-600 text-white rounded-md shadow hover-bg-green-700 transition-colors"
+            >
+              New Maze
+            </button>
+          </div>
+
+          <!-- Difficulty Selector -->
+          <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-700">Difficulty:</span>
+            <select 
+              id="difficulty-select"
+              class="border rounded-md px-2 py-1 text-sm bg-white"
+            >
+              <option value="easy">Easy (2 segments)</option>
+              <option value="medium" selected>Medium (4+ segments)</option>
+              <option value="hard">Hard (6+ segments)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="canvasContainer" class="relative bg-white border-b">
+        <div id="maze-overlay" class="absolute inset-0 bg-success bg-opacity-75 flex items-center justify-center z-10" style="display: none;">
+          <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-sm">
+            <div id="overlay-icon" class="h-12 w-12 mx-auto"></div>
+            
+            <h2 id="overlay-title" class="text-xl font-bold mt-2">
+              Maze Completed!
+            </h2>
+            
+            <p id="overlay-message" class="mb-4">
+              Congratulations, you solved the maze!
+            </p>
+            
+            <button 
+              id="overlay-button"
+              class="px-4 py-2 rounded-md shadow transition-colors"
+              style="background-color: #6366f1; color: white;"
+            >
+              New Maze
+            </button>
+          </div>
+        </div>
+        
+        <canvas id="maze-canvas" class="custom-cursor mx-auto block touch-none"></canvas>
+      </div>
+
+      <div class="p-3 bg-gray-50 flex justify-center items-center">
+        <div class="text-sm text-gray-700">
+          <span id="status-text"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Constants and global variables
+    const canvas = document.getElementById('maze-canvas');
+    const ctx = canvas.getContext('2d');
+    const difficultySelect = document.getElementById('difficulty-select');
+    const newGameBtn = document.getElementById('new-game-btn');
+    const mazeOverlay = document.getElementById('maze-overlay');
+    const overlayIcon = document.getElementById('overlay-icon');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlayMessage = document.getElementById('overlay-message');
+    const overlayButton = document.getElementById('overlay-button');
+    const statusText = document.getElementById('status-text');
+    
+    let canvasSize = 600;
+    let difficulty = 'medium';
+    let gameStatus = 'ready';
+    let maze = null;
+    let cursorType = 'circle';
+    let isDrawing = false;
+    let currentPosition = { x: 0, y: 0 };
+    let mousePosition = { x: 0, y: 0 };
+    let pathSegments = [];
+    const cursorSize = 8;
+    
+    // Set canvas size responsively
+    function setCanvasSize() {
+      const containerWidth = Math.min(window.innerWidth - 32, 600);
+      canvasSize = containerWidth;
+      canvas.width = canvasSize;
+      canvas.height = canvasSize;
+      
+      // Regenerate maze when size changes
+      if (maze) {
+        generateNewMaze();
+      }
+    }
+    
+    // Handle difficulty change
+    function handleDifficultyChange() {
+      difficulty = difficultySelect.value;
+      generateNewMaze();
+    }
+    
+    // Handle game status change
+    function setGameStatus(status) {
+      gameStatus = status;
+      
+      // Update status text
+      switch (status) {
+        case 'playing':
+          statusText.textContent = 'Drawing path...';
+          break;
+        case 'collision':
+          statusText.textContent = 'You hit a wall!';
+          showOverlay(false);
+          break;
+        case 'victory':
+          statusText.textContent = 'Maze completed!';
+          showOverlay(true);
+          break;
+        case 'ready':
+        default:
+          statusText.textContent = '';
+          break;
+      }
+    }
+    
+    // Show overlay for victory or collision
+    function showOverlay(isVictory) {
+      mazeOverlay.style.display = 'flex';
+      
+      if (isVictory) {
+        mazeOverlay.classList.remove('bg-error');
+        mazeOverlay.classList.add('bg-success');
+        overlayIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+        overlayTitle.textContent = 'Maze Completed!';
+        overlayMessage.textContent = 'Congratulations, you solved the maze!';
+        overlayButton.textContent = 'New Maze';
+      } else {
+        mazeOverlay.classList.remove('bg-success');
+        mazeOverlay.classList.add('bg-error');
+        overlayIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-error"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        overlayTitle.textContent = 'You hit a wall!';
+        overlayMessage.textContent = 'Try to navigate without touching the walls.';
+        overlayButton.textContent = 'Try Again';
+      }
+    }
+    
+    // Hide overlay
+    function hideOverlay() {
+      mazeOverlay.style.display = 'none';
+    }
+    
+    // Generate a new maze
+    function generateNewMaze() {
+      const newMaze = generateRectangularMaze(canvasSize, difficulty);
+      maze = newMaze;
+      setGameStatus('ready');
+      hideOverlay();
+      
+      // Clear previous path segments
+      pathSegments = [];
+      
+      // Set the current position to the start point
+      if (maze.startPoint) {
+        currentPosition = { x: maze.startPoint.x, y: maze.startPoint.y };
+      }
+      
+      // Draw the maze
+      drawMaze();
+    }
+    
+    // Get difficulty settings
+    function getDifficultySettings(difficulty) {
+      switch (difficulty) {
+        case 'easy':
+          return {
+            cellSize: 28, 
+            wallDensity: 0.3,
+            pathWidth: 3,
+            deadEndProbability: 0.2,
+            additionalWallProbability: 0.3,
+            minPathSegments: 2,
+            minTurns: 1
+          };
+        case 'hard':
+          return {
+            cellSize: 18, 
+            wallDensity: 0.6,
+            pathWidth: 2,
+            deadEndProbability: 0.8,
+            additionalWallProbability: 0.7,
+            minPathSegments: 6,
+            minTurns: 5
+          };
+        case 'medium':
+        default:
+          return {
+            cellSize: 22, 
+            wallDensity: 0.5,
+            pathWidth: 2.5,
+            deadEndProbability: 0.7,
+            additionalWallProbability: 0.6,
+            minPathSegments: 4,
+            minTurns: 3
+          };
+      }
+    }
+    
+    // Generate a rectangular maze
+    function generateRectangularMaze(canvasSize, difficulty) {
+      const settings = getDifficultySettings(difficulty);
+      const cellSize = settings.cellSize;
+      const gridSize = Math.floor(canvasSize / cellSize);
+      
+      // Initialize the grid with walls (1 = wall, 0 = path)
+      const grid = Array(gridSize).fill(0).map(() => Array(gridSize).fill(1));
+      
+      // Use a recursive backtracking algorithm to generate a proper maze
+      const visited = Array(gridSize).fill(0).map(() => Array(gridSize).fill(false));
+      
+      // Starting point for maze generation
+      const startX = 1;
+      const startY = 1;
+      
+      // Carve passages using recursive backtracking
+      function carvePassages(x, y) {
+        // Mark current cell as visited and as a path
+        visited[y][x] = true;
+        grid[y][x] = 0;
+        
+        // Define possible directions (right, down, left, up)
+        const directions = [
+          {dx: 2, dy: 0}, // Right
+          {dx: 0, dy: 2}, // Down
+          {dx: -2, dy: 0}, // Left
+          {dx: 0, dy: -2}  // Up
+        ];
+        
+        // Randomize directions
+        for (let i = 0; i < directions.length; i++) {
+          const j = Math.floor(Math.random() * directions.length);
+          [directions[i], directions[j]] = [directions[j], directions[i]];
+        }
+        
+        // Try each direction
+        for (const dir of directions) {
+          const nx = x + dir.dx;
+          const ny = y + dir.dy;
+          
+          // Check if the next cell is valid and unvisited
+          if (nx > 0 && nx < gridSize - 1 && ny > 0 && ny < gridSize - 1 && !visited[ny][nx]) {
+            // Remove the wall between current cell and next cell
+            grid[y + dir.dy/2][x + dir.dx/2] = 0;
+            // Recursively carve passages from the next cell
+            carvePassages(nx, ny);
+          }
+        }
+      }
+      
+      // Start carving passages
+      carvePassages(startX, startY);
+      
+      // Add additional walls to increase complexity (based on difficulty)
+      addRandomWalls(grid, settings.additionalWallProbability);
+      
+      // Set start and end points
+      // Place them more randomly, not always at corners
+      const margin = Math.floor(gridSize * 0.15); // Margin from edges
+      
+      // Choose random positions near edges for start and end
+      const startPositions = [
+        // Top edge
+        { x: margin + Math.floor(Math.random() * (gridSize - 2 * margin)), y: margin },
+        // Left edge
+        { x: margin, y: margin + Math.floor(Math.random() * (gridSize - 2 * margin)) }
+      ];
+      
+      const endPositions = [
+        // Bottom edge
+        { x: margin + Math.floor(Math.random() * (gridSize - 2 * margin)), y: gridSize - margin - 1 },
+        // Right edge
+        { x: gridSize - margin - 1, y: margin + Math.floor(Math.random() * (gridSize - 2 * margin)) }
+      ];
+      
+      const startPos = startPositions[Math.floor(Math.random() * startPositions.length)];
+      const endPos = endPositions[Math.floor(Math.random() * endPositions.length)];
+      
+      const startGridX = startPos.x;
+      const startGridY = startPos.y;
+      const endGridX = endPos.x;
+      const endGridY = endPos.y;
+      
+      // Convert to actual canvas coordinates
+      const startPoint = { 
+        x: (startGridX + 0.5) * cellSize, 
+        y: (startGridY + 0.5) * cellSize 
+      };
+      const endPoint = { 
+        x: (endGridX + 0.5) * cellSize, 
+        y: (endGridY + 0.5) * cellSize 
+      };
+      
+      // Clear space for start and end points
+      grid[startGridY][startGridX] = 0;
+      grid[endGridY][endGridX] = 0;
+      
+      // Ensure there's at least one possible path
+      findPathAndAddComplexity(grid, startGridX, startGridY, endGridX, endGridY, settings.deadEndProbability);
+      
+      return {
+        type: "rectangular",
+        grid,
+        cellSize,
+        startPoint,
+        endPoint
+      };
+    }
+    
+    // Add random walls to increase complexity
+    function addRandomWalls(grid, probability) {
+      for (let y = 1; y < grid.length - 1; y++) {
+        for (let x = 1; x < grid[0].length - 1; x++) {
+          // Only consider adding walls to path cells
+          if (grid[y][x] === 0) {
+            // Check if this is not a critical path junction (has 3+ open neighbors)
+            let openNeighbors = 0;
+            const neighbors = [
+              [y-1, x], [y+1, x], [y, x-1], [y, x+1]
+            ];
+            
+            for (const [ny, nx] of neighbors) {
+              if (ny >= 0 && ny < grid.length && nx >= 0 && nx < grid[0].length && grid[ny][nx] === 0) {
+                openNeighbors++;
+              }
+            }
+            
+            // Only add walls if we won't block the path completely
+            if (openNeighbors > 2 && Math.random() < probability) {
+              grid[y][x] = 1; // Add a wall
+            }
+          }
+        }
+      }
+    }
+    
+    // Find a path and add complexity to ensure minimum path segments
+    function findPathAndAddComplexity(grid, startX, startY, endX, endY, deadEndProb) {
+      // Get the current difficulty settings from the maze dimensions
+      // Figure out which difficulty we're using based on grid size
+      let difficultyLevel = 'medium'; // Default
+      const gridSize = grid.length;
+      
+      if (gridSize > 25) {
+        difficultyLevel = 'easy';
+      } else if (gridSize < 20) {
+        difficultyLevel = 'hard';
+      }
+      
+      const settings = getDifficultySettings(difficultyLevel);
+      
+      // First, let's ensure there's at least one valid path using A* algorithm
+      let path = findPathAStar(grid, startX, startY, endX, endY);
+      
+      if (!path || path.length === 0) {
+        // If no path found, create a complex winding path
+        createComplexPath(grid, startX, startY, endX, endY, settings.minTurns);
+        // Find the new path after creating it
+        path = findPathAStar(grid, startX, startY, endX, endY);
+      } else {
+        // Check if the path is too simple (straight line or very few segments)
+        const numTurns = countPathTurns(path);
+        const numSegments = countPathSegments(path);
+        
+        console.log(`Path analysis - Difficulty: ${difficultyLevel}, Segments: ${numSegments}, Required: ${settings.minPathSegments}, Turns: ${numTurns}, Required: ${settings.minTurns}`);
+        
+        if (numSegments < settings.minPathSegments || numTurns < settings.minTurns) {
+          // Path is too simple - add complexity by forcing more turns
+          console.log("Path is too simple - adding complexity");
+          makePathMoreComplex(grid, path, settings.minTurns);
+          
+          // Recalculate path
+          path = findPathAStar(grid, startX, startY, endX, endY);
+        }
+      }
+      
+      // Add some dead ends for additional complexity
+      addDeadEnds(grid, path, deadEndProb);
+      
+      return path;
+    }
+    
+    // Count the number of path segments
+    function countPathSegments(path) {
+      if (!path || path.length < 2) return 0;
+      
+      let segments = 1;
+      let directionX = path[1].x - path[0].x;
+      let directionY = path[1].y - path[0].y;
+      
+      for (let i = 2; i < path.length; i++) {
+        const newDirectionX = path[i].x - path[i-1].x;
+        const newDirectionY = path[i].y - path[i-1].y;
+        
+        // If direction changes, count a new segment
+        if (newDirectionX !== directionX || newDirectionY !== directionY) {
+          segments++;
+          directionX = newDirectionX;
+          directionY = newDirectionY;
+        }
+      }
+      
+      return segments;
+    }
+    
+    // Count the number of turns in a path
+    function countPathTurns(path) {
+      return countPathSegments(path) - 1; // Turns = Segments - 1
+    }
+    
+    // Make a path more complex by adding walls that force turns
+    function makePathMoreComplex(grid, path, minTurns) {
+      if (!path || path.length < 4) return;
+      
+      // Find long straight segments and add walls to force turns
+      let directionX = path[1].x - path[0].x;
+      let directionY = path[1].y - path[0].y;
+      let segmentStart = 0;
+      
+      for (let i = 2; i < path.length; i++) {
+        const newDirectionX = path[i].x - path[i-1].x;
+        const newDirectionY = path[i].y - path[i-1].y;
+        
+        // If direction changes or we're at the end
+        if (newDirectionX !== directionX || newDirectionY !== directionY || i === path.length - 1) {
+          // If this was a long segment, add a wall in the middle to force a turn
+          const segmentLength = i - segmentStart;
+          if (segmentLength > 3) {
+            const midIndex = Math.floor((segmentStart + i) / 2);
+            const mid = path[midIndex];
+            
+            // Add a wall at the midpoint to force a detour
+            if (mid.x > 0 && mid.x < grid[0].length - 1 && mid.y > 0 && mid.y < grid.length - 1) {
+              grid[mid.y][mid.x] = 1; // Add a wall
+              
+              // Create an alternative path around the wall
+              if (directionX !== 0) {
+                // Moving horizontally, add vertical detour
+                grid[mid.y + 1][mid.x] = 0; // Make a path below
+                grid[mid.y + 1][mid.x - 1] = 0; // Connect to original path
+                grid[mid.y + 1][mid.x + 1] = 0; // Connect to original path
+              } else {
+                // Moving vertically, add horizontal detour
+                grid[mid.y][mid.x + 1] = 0; // Make a path to the right
+                grid[mid.y - 1][mid.x + 1] = 0; // Connect to original path
+                grid[mid.y + 1][mid.x + 1] = 0; // Connect to original path
+              }
+            }
+          }
+          
+          // Start a new segment
+          segmentStart = i - 1;
+          directionX = newDirectionX;
+          directionY = newDirectionY;
+        }
+      }
+    }
+    
+    // Add dead ends to increase complexity
+    function addDeadEnds(grid, path, probability) {
+      // Don't add dead ends on the main path
+      const pathCells = new Set();
+      if (path) {
+        path.forEach(p => pathCells.add(`${p.x},${p.y}`));
+      }
+      
+      // Add random dead ends
+      for (let y = 2; y < grid.length - 2; y++) {
+        for (let x = 2; x < grid[0].length - 2; x++) {
+          // Only consider cells that are not on the main path
+          if (grid[y][x] === 0 && !pathCells.has(`${x},${y}`)) {
+            if (Math.random() < probability) {
+              // Check if this cell has only one open neighbor (dead end candidate)
+              const neighbors = [
+                [y-1, x], [y+1, x], [y, x-1], [y, x+1]
+              ];
+              
+              let openCount = 0;
+              let deadEndDir = null;
+              
+              for (let i = 0; i < neighbors.length; i++) {
+                const [ny, nx] = neighbors[i];
+                if (grid[ny][nx] === 0) {
+                  openCount++;
+                  deadEndDir = i; // Remember the direction of the opening
+                }
+              }
+              
+              // If it has exactly one open neighbor, make it a dead end
+              if (openCount === 1 && deadEndDir !== null) {
+                // Check that it doesn't block a critical path
+                const [dy, dx] = neighbors[deadEndDir];
+                const key = `${dx},${dy}`;
+                
+                if (!pathCells.has(key)) {
+                  // Create a small dead end branch
+                  const deadEndLength = 1 + Math.floor(Math.random() * 3);
+                  
+                  let currX = x;
+                  let currY = y;
+                  
+                  for (let j = 0; j < deadEndLength; j++) {
+                    // Direction away from the opening
+                    const dirX = currX - dx;
+                    const dirY = currY - dy;
+                    
+                    // Move one step in that direction
+                    currX += dirX;
+                    currY += dirY;
+                    
+                    // If we're still in bounds, add the dead end cell
+                    if (currX > 0 && currX < grid[0].length - 1 && currY > 0 && currY < grid.length - 1) {
+                      grid[currY][currX] = 0; // Make it a path
+                    } else {
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // A* pathfinding algorithm
+    function findPathAStar(grid, startX, startY, endX, endY) {
+      // Priority queue for open nodes
+      const openSet = [{
+        x: startX,
+        y: startY,
+        g: 0, // Cost from start to current node
+        h: heuristic(startX, startY, endX, endY), // Estimated cost from current to end
+        f: heuristic(startX, startY, endX, endY), // Total cost: g + h
+        parent: null
+      }];
+      
+      const closedSet = new Set(); // Set of visited nodes
+      
+      while (openSet.length > 0) {
+        // Find node with lowest total cost
+        let lowestIndex = 0;
+        for (let i = 1; i < openSet.length; i++) {
+          if (openSet[i].f < openSet[lowestIndex].f) {
+            lowestIndex = i;
+          }
+        }
+        
+        const current = openSet[lowestIndex];
+        
+        // If we reached the end, reconstruct the path
+        if (current.x === endX && current.y === endY) {
+          const path = [];
+          let node = current;
+          
+          while (node) {
+            path.unshift({x: node.x, y: node.y});
+            node = node.parent;
+          }
+          
+          return path;
+        }
+        
+        // Remove current from open set and add to closed set
+        openSet.splice(lowestIndex, 1);
+        closedSet.add(`${current.x},${current.y}`);
+        
+        // Check all 4 neighbors
+        const neighbors = [
+          {x: current.x, y: current.y - 1}, // Up
+          {x: current.x + 1, y: current.y}, // Right
+          {x: current.x, y: current.y + 1}, // Down
+          {x: current.x - 1, y: current.y}  // Left
+        ];
+        
+        for (const neighbor of neighbors) {
+          const {x, y} = neighbor;
+          
+          // Skip if out of bounds or is a wall
+          if (x < 0 || x >= grid[0].length || y < 0 || y >= grid.length || grid[y][x] === 1) {
+            continue;
+          }
+          
+          // Skip if already evaluated
+          if (closedSet.has(`${x},${y}`)) {
+            continue;
+          }
+          
+          // Calculate costs
+          const gScore = current.g + 1; // Cost from start to neighbor through current
+          
+          // Check if this is a better path
+          let openNode = openSet.find(node => node.x === x && node.y === y);
+          
+          if (!openNode) {
+            // Not in open set, add it
+            openNode = {
+              x,
+              y,
+              g: gScore,
+              h: heuristic(x, y, endX, endY),
+              f: gScore + heuristic(x, y, endX, endY),
+              parent: current
+            };
+            openSet.push(openNode);
+          } else if (gScore < openNode.g) {
+            // Found a better path
+            openNode.g = gScore;
+            openNode.f = gScore + openNode.h;
+            openNode.parent = current;
+          }
+        }
+      }
+      
+      // No path found
+      return [];
+    }
+    
+    // Heuristic function for A* (Manhattan distance)
+    function heuristic(x1, y1, x2, y2) {
+      return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+    
+    // Create a complex path with minimum number of turns
+    function createComplexPath(grid, startX, startY, endX, endY, minTurns) {
+      // Create a more interesting path with multiple turns
+      let x = startX;
+      let y = startY;
+      
+      // Keep track of our turns
+      let turnsAdded = 0;
+      let lastDirection = "";
+      
+      // Calculate direct distance to help with path planning
+      const directDistX = Math.abs(endX - startX);
+      const directDistY = Math.abs(endY - startY);
+      
+      // Create a series of intermediate points to ensure we have enough turns
+      const intermediatePoints = [];
+      
+      // Create intermediate points that force turns
+      // Zigzag pattern: go partially in x direction, then some y, then more x, etc.
+      if (directDistX > 3 && directDistY > 3) {
+        // Determine how many zigzags based on minTurns
+        const zigzags = Math.max(1, Math.min(Math.floor(minTurns / 2), 3)); // Cap at 3 zigzags max
+        
+        for (let i = 1; i <= zigzags; i++) {
+          // Add X-direction intermediate point
+          const ratioX = i / (zigzags + 1);
+          const pointX = {
+            x: Math.floor(startX + (endX - startX) * ratioX),
+            y: Math.floor(startY + (endY - startY) * (i % 2 === 1 ? 0.3 : 0.7))
+          };
+          intermediatePoints.push(pointX);
+          
+          // Add Y-direction intermediate point
+          const ratioY = (i + 0.5) / (zigzags + 1);
+          const pointY = {
+            x: Math.floor(startX + (endX - startX) * (i % 2 === 0 ? 0.3 : 0.7)),
+            y: Math.floor(startY + (endY - startY) * ratioY)
+          };
+          intermediatePoints.push(pointY);
+        }
+      } else {
+        // Smaller maze, just add one or two intermediate points
+        intermediatePoints.push({
+          x: Math.floor((startX + endX) / 2),
+          y: startY
+        });
+        intermediatePoints.push({
+          x: Math.floor((startX + endX) / 2),
+          y: endY
+        });
+      }
+      
+      // Add the end point as the final destination
+      intermediatePoints.push({ x: endX, y: endY });
+      
+      // Carve path through each intermediate point
+      for (const point of intermediatePoints) {
+        // Move to the next intermediate point
+        while (x !== point.x || y !== point.y) {
+          // Randomly decide which direction to move first (to add randomness)
+          const moveXFirst = Math.random() > 0.5;
+          
+          if (moveXFirst && x !== point.x) {
+            // Move horizontally
+            const dx = x < point.x ? 1 : -1;
+            const newX = x + dx;
+            
+            // If this is a valid move
+            if (newX >= 0 && newX < grid[0].length) {
+              // Mark as path
+              grid[y][newX] = 0;
+              
+              // If we changed direction, count a turn
+              if (lastDirection !== "horizontal") {
+                lastDirection = "horizontal";
+                turnsAdded++;
+              }
+              
+              x = newX;
+            }
+          } else if (y !== point.y) {
+            // Move vertically
+            const dy = y < point.y ? 1 : -1;
+            const newY = y + dy;
+            
+            // If this is a valid move
+            if (newY >= 0 && newY < grid.length) {
+              // Mark as path
+              grid[newY][x] = 0;
+              
+              // If we changed direction, count a turn
+              if (lastDirection !== "vertical") {
+                lastDirection = "vertical";
+                turnsAdded++;
+              }
+              
+              y = newY;
+            }
+          } else if (x !== point.x) {
+            // We couldn't move vertically, so move horizontally
+            const dx = x < point.x ? 1 : -1;
+            const newX = x + dx;
+            
+            // If this is a valid move
+            if (newX >= 0 && newX < grid[0].length) {
+              // Mark as path
+              grid[y][newX] = 0;
+              
+              // If we changed direction, count a turn
+              if (lastDirection !== "horizontal") {
+                lastDirection = "horizontal";
+                turnsAdded++;
+              }
+              
+              x = newX;
+            }
+          }
+        }
+      }
+      
+      // Return the number of turns we added
+      return turnsAdded;
+    }
+    
+    // Draw the maze
+    function drawMaze() {
+      if (!maze) return;
+      
+      ctx.clearRect(0, 0, canvasSize, canvasSize);
+      
+      // Draw rectangular maze
+      drawRectangularMaze();
+      
+      // Draw start and end points
+      ctx.fillStyle = "#4F46E5"; // Indigo start point
+      ctx.beginPath();
+      ctx.arc(maze.startPoint.x, maze.startPoint.y, cursorSize, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = "#F59E0B"; // Amber/gold end point
+      ctx.beginPath();
+      ctx.arc(maze.endPoint.x, maze.endPoint.y, cursorSize, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Draw stored path segments if in playing mode
+      if (gameStatus === 'playing' && pathSegments.length > 0) {
+        drawStoredPaths();
+      }
+      
+      // Draw cursor if mouse is over canvas
+      if (mousePosition.x > 0 && mousePosition.y > 0 && gameStatus !== 'collision' && gameStatus !== 'victory') {
+        drawCursor(mousePosition.x, mousePosition.y);
+      }
+    }
+    
+    // Draw rectangular maze
+    function drawRectangularMaze() {
+      const cellSize = maze.cellSize;
+      const gridSize = maze.grid.length;
+      
+      ctx.fillStyle = "#000000";
+      
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          if (maze.grid[y][x] === 1) {
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+    }
+    
+    // Draw the player's cursor
+    function drawCursor(x, y) {
+      ctx.save();
+      
+      // For now, we only use the circle cursor
+      ctx.fillStyle = "#EC4899"; // Pink cursor
+      ctx.beginPath();
+      ctx.arc(x, y, cursorSize/2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+    
+    // Draw the player's path
+    function drawPath(fromX, fromY, toX, toY) {
+      // Add this segment to our path history
+      if (gameStatus === "playing") {
+        pathSegments.push({fromX, fromY, toX, toY});
+      }
+      
+      // Draw the current segment
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.strokeStyle = "#8B5CF6"; // Purple trail
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    
+    // Draw all stored path segments
+    function drawStoredPaths() {
+      ctx.strokeStyle = "#8B5CF6"; // Purple trail
+      ctx.lineWidth = 3;
+      
+      // Draw all previous path segments
+      pathSegments.forEach(segment => {
+        ctx.beginPath();
+        ctx.moveTo(segment.fromX, segment.fromY);
+        ctx.lineTo(segment.toX, segment.toY);
+        ctx.stroke();
+      });
+    }
+    
+    // Check if the cursor collides with a wall
+    function checkCollision(x, y) {
+      if (gameStatus !== "playing" || !maze) return false;
+      
+      const cellSize = maze.cellSize;
+      
+      // Check the cells around the cursor
+      for (let offsetY = -cursorSize/2; offsetY <= cursorSize/2; offsetY += cursorSize/2) {
+        for (let offsetX = -cursorSize/2; offsetX <= cursorSize/2; offsetX += cursorSize/2) {
+          const checkX = x + offsetX;
+          const checkY = y + offsetY;
+          
+          const gridX = Math.floor(checkX / cellSize);
+          const gridY = Math.floor(checkY / cellSize);
+          
+          // Check if position is within grid bounds
+          if (gridX >= 0 && gridX < maze.grid.length && gridY >= 0 && gridY < maze.grid.length) {
+            if (maze.grid[gridY][gridX] === 1) {
+              return true;
+            }
+          }
+        }
+      }
+      
+      return false;
+    }
+    
+    // Check if the player has reached the end point
+    function checkVictory(x, y) {
+      if (!maze) return false;
+      const distSquared = Math.pow(x - maze.endPoint.x, 2) + Math.pow(y - maze.endPoint.y, 2);
+      return distSquared < Math.pow(cursorSize, 2);
+    }
+    
+    // Handle mouse/touch down
+    function handlePointerDown(e) {
+      if (gameStatus !== "ready" && gameStatus !== "playing") return;
+      
+      if (!canvas || !maze) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      
+      // Check if starting near the start point (first time)
+      const distFromStart = Math.sqrt(Math.pow(x - maze.startPoint.x, 2) + Math.pow(y - maze.startPoint.y, 2));
+      
+      // Check if continuing from the last position where the user left off
+      const distFromLastPos = Math.sqrt(Math.pow(x - currentPosition.x, 2) + Math.pow(y - currentPosition.y, 2));
+      
+      // Allow starting from beginning or continuing from last position
+      if (distFromStart < cursorSize * 2 || 
+          (gameStatus === "playing" && distFromLastPos < cursorSize * 3)) {
+        
+        // If we're starting from the beginning, set game status to playing
+        if (distFromStart < cursorSize * 2 && gameStatus !== "playing") {
+          setGameStatus("playing");
+          // Start drawing from the start point
+          currentPosition = { x: maze.startPoint.x, y: maze.startPoint.y };
+        }
+        
+        // Start drawing
+        isDrawing = true;
+      }
+      
+      // Prevent default to avoid scrolling on touch devices
+      e.preventDefault();
+    }
+    
+    // Handle mouse/touch move
+    function handlePointerMove(e) {
+      if (!canvas || !maze) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      
+      // Always update mouse position for cursor tracking
+      mousePosition = { x, y };
+      
+      // If not drawing, just redraw the maze and cursor
+      if (!isDrawing || gameStatus !== "playing") {
+        drawMaze();
+        return;
+      }
+      
+      // Draw the path
+      drawPath(currentPosition.x, currentPosition.y, x, y);
+      
+      // Check for collision
+      if (checkCollision(x, y)) {
+        isDrawing = false;
+        setGameStatus("collision");
+        return;
+      }
+      
+      // Check for victory
+      if (checkVictory(x, y)) {
+        isDrawing = false;
+        setGameStatus("victory");
+        return;
+      }
+      
+      // Update current position
+      currentPosition = { x, y };
+      
+      // Draw cursor at current position
+      drawCursor(x, y);
+      
+      // Prevent default to avoid scrolling on touch devices
+      e.preventDefault();
+    }
+    
+    // Handle mouse/touch up
+    function handlePointerUp(e) {
+      isDrawing = false;
+      
+      // Prevent default
+      e.preventDefault();
+    }
+    
+    // Event listeners
+    window.addEventListener('resize', setCanvasSize);
+    difficultySelect.addEventListener('change', handleDifficultyChange);
+    newGameBtn.addEventListener('click', generateNewMaze);
+    overlayButton.addEventListener('click', generateNewMaze);
+    
+    canvas.addEventListener('mousedown', handlePointerDown);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('mouseup', handlePointerUp);
+    canvas.addEventListener('mouseleave', handlePointerUp);
+    
+    canvas.addEventListener('touchstart', handlePointerDown, { passive: false });
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
+    canvas.addEventListener('touchend', handlePointerUp, { passive: false });
+    canvas.addEventListener('touchcancel', handlePointerUp, { passive: false });
+    
+    // Initialize
+    setCanvasSize();
+    generateNewMaze();
+  </script>
+</body>
+</html>
