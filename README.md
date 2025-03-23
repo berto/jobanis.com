@@ -6,4 +6,4 @@ Jobanis!
 
 
 [1. Sudoku](/sudoku/)  
-[1. Maze](/maze/)
+[2. Maze](/maze/)
